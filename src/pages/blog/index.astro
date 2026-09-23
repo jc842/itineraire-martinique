@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig } from '../../config/site.config';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft && (!data.lang || data.lang === 'fr'));
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title="Tous les Itinéraires & Étapes | Itinéraire Martinique">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <header class="mb-10 pb-6 border-b border-stone-300">
+      <span class="text-xs font-mono font-bold uppercase tracking-widest text-amber-800">Index des Feuilles de Route</span>
+      <h1 class="text-3xl sm:text-5xl font-serif font-bold text-stone-950 mt-1 mb-3">L'Ensemble des 200 Étapes Référencées</h1>
+      <p class="text-stone-600 text-sm max-w-2xl leading-relaxed">
+        Explorez toutes les fiches pratiques : circuits en voiture, randonnées volcaniques, distilleries séculaires et mouillages côtiers en Martinique.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {posts.map(post => (
+        <article class="bg-[#faf8f5] border border-stone-200 p-6 rounded-lg shadow-sm hover:border-amber-600/50 hover:shadow transition-all flex flex-col justify-between">
+          <div>
+            {post.data.heroImage && (
+              <a href={`/blog/${post.id}/`} class="aspect-[16/10] overflow-hidden rounded mb-4 bg-stone-200 block">
+                <img src={post.data.heroImage} alt={post.data.title} class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+              </a>
+            )}
+            <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded mb-2.5 inline-block">
+              {post.data.category}
+            </span>
+            <h2 class="text-lg font-serif font-bold text-stone-900 hover:text-amber-800 transition-colors line-clamp-2 leading-snug mb-2">
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            </h2>
+            <p class="text-xs text-stone-600 line-clamp-3 mb-4 leading-relaxed font-normal">{post.data.description}</p>
+          </div>
+          <div class="pt-4 border-t border-stone-200 flex items-center justify-between text-[11px] font-mono text-stone-500">
+            <span>{new Date(post.data.pubDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            <a href={`/blog/${post.id}/`} class="font-bold text-amber-800 hover:underline">Lire le guide &rarr;</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</Layout>
